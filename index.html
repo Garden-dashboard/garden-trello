@@ -145,6 +145,8 @@ svg.i{width:16px;height:16px;flex:none;vertical-align:-3px}
 .chip-l{height:32px;min-width:44px;border-radius:4px;padding:0 10px;display:inline-flex;align-items:center;font-weight:600;font-size:13px;color:#172b4d}
 .addchip{width:32px;height:32px;border-radius:50%;background:#091e420f;display:inline-flex;align-items:center;justify-content:center}
 .addchip:hover{background:#091e4224}
+.vis{font-size:12px;color:var(--mut);margin-top:6px;display:flex;align-items:center;gap:4px}
+.vis svg{width:13px;height:13px}
 .duebox{display:inline-flex;align-items:center;gap:8px;background:#091e420f;border-radius:6px;padding:5px 10px;cursor:pointer}
 .duebox input{width:16px;height:16px;accent-color:var(--g)}
 .tag{font-size:11px;font-weight:700;padding:1px 6px;border-radius:3px}
@@ -301,6 +303,7 @@ var IC = {
   card:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/>', list:'<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>',
   filter:'<path d="M3 5h18l-7 8v6l-4 2v-8z"/>', bolt:'<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>', tg:'<path d="M21 4L3 11l6 2 2 6 3-4 5 4z"/><path d="M9 13l12-9"/>',
   key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3"/>', out:'<path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h11"/>', users:'<circle cx="9" cy="8" r="3.5"/><path d="M2 20c.8-3.5 3.5-5 7-5s6.2 1.5 7 5M16 4.5a3.5 3.5 0 0 1 0 7M18 15c2 .6 3.3 2.2 4 5"/>',
+  lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>', globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
   copy:'<rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V4H3v13h5"/>', restore:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/>', home:'<path d="M3 11l9-8 9 8v10h-6v-6H9v6H3z"/>'
 };
 function ic(n, cls){ return '<svg class="i '+(cls||'')+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+IC[n]+'</svg>'; }
@@ -560,7 +563,7 @@ function cardHTML(c){
   if (c.comments) bd += '<span class="bdg" title="Izohlar">'+ic("chat")+' '+c.comments+'</span>';
   if (c.attachments.length) bd += '<span class="bdg" title="Rasmlar">'+ic("clip")+' '+c.attachments.length+'</span>';
   if (c.checklists.length) { var all = clDone(c); bd += '<span class="bdg'+(all ? " due-ok" : "")+'" title="Checklist">'+ic("check")+' '+clCount(c)+'</span>'; }
-  if (c.members.length) bd += '<span class="mem">'+c.members.slice(0, 4).map(function(m){ return av(m); }).join("")+'</span>';
+  if (c.members.length) bd += '<span class="bdg" title="Faqat mas\'ullar ko\'radi">'+ic("lock")+'</span><span class="mem">'+c.members.slice(0, 4).map(function(m){ return av(m); }).join("")+'</span>';
   return '<div class="card'+(c.done ? " done" : "")+'" data-id="'+h(c.id)+'">'+cover+'<div class="cb">'+
     (lbls.length ? '<div class="lbls">'+lbls.map(function(l){ return '<span class="lbl'+(l.name ? " n" : "")+'" style="background:'+l.color+'" title="'+h(l.name)+'">'+h(l.name)+'</span>'; }).join("")+'</div>' : "")+
     '<div class="ct">'+h(c.title)+'</div>'+(bd ? '<div class="badges">'+bd+'</div>' : "")+'</div></div>';
@@ -957,7 +960,8 @@ function renderModal(){
     '<div class="mhead">'+ic("card", "")+'<textarea id="mT" rows="1">'+h(c.title)+'</textarea></div>'+
     '<div class="msub">«<a id="mList">'+h(l ? l.title : "?")+'</a>» ustunida'+(c.archived ? ' · <b style="color:var(--red)">arxivda</b>' : '')+(c.createdBy ? ' · yaratdi: '+h(uname(c.createdBy)) : '')+'</div>'+
     '<div class="mbody"><div class="mmain"><div class="mrow">';
-  html += '<div><h5>Mas\'ullar</h5><div class="chips">'+c.members.map(function(m){ return av(m, "lg"); }).join("")+'<button class="addchip" id="mAddMem" title="Mas\'ul qo\'shish">'+ic("plus")+'</button></div></div>';
+  html += '<div><h5>Mas\'ullar</h5><div class="chips">'+c.members.map(function(m){ return av(m, "lg"); }).join("")+'<button class="addchip" id="mAddMem" title="Mas\'ul qo\'shish">'+ic("plus")+'</button></div>'+
+    '<div class="vis">'+(c.members.length ? ic("lock")+' Faqat mas\'ullar'+(c.createdBy && c.members.indexOf(c.createdBy) < 0 ? ', '+h(uname(c.createdBy)) : '')+' va admin ko\'radi' : ic("globe")+' Hamma ko\'radi')+'</div></div>';
   if (lbls.length) html += '<div><h5>Belgilar</h5><div class="chips">'+lbls.map(function(x){ return '<span class="chip-l" style="background:'+x.color+'">'+h(x.name)+'</span>'; }).join("")+'<button class="addchip" id="mAddLbl">'+ic("plus")+'</button></div></div>';
   if (c.due) html += '<div><h5>Muddat</h5><div class="duebox"><input type="checkbox" id="mDone" '+(c.done ? "checked" : "")+' title="Bajarildi"><span id="mDueTxt">'+fmtDue(c.due)+'</span>'+(st === "ok" ? '<span class="tag ok">bajarildi</span>' : st === "over" ? '<span class="tag over">muddati o\'tgan</span>' : st === "soon" ? '<span class="tag soon">tez orada</span>' : '')+'</div></div>';
   else html += '<div><h5>Holat</h5><label class="duebox"><input type="checkbox" id="mDone" '+(c.done ? "checked" : "")+'> Bajarildi</label></div>';
@@ -1141,7 +1145,8 @@ function renderFeed(){
 function memPop(anchor, c){
   pop(anchor, "Mas'ullar", function(b){
     function draw(){
-      b.innerHTML = '<input class="inp" id="mpQ" placeholder="Qidirish…" style="margin-bottom:8px">' + '<div id="mpL"></div>';
+      b.innerHTML = '<div style="font-size:12px;color:var(--mut);background:#091e420a;border-radius:6px;padding:8px;margin-bottom:8px">'+ic("lock")+' Mas\'ul tanlansa, kartochkani faqat o\'sha kishilar, uni yaratgan kishi va administrator ko\'radi.</div>'+
+        '<input class="inp" id="mpQ" placeholder="Qidirish…" style="margin-bottom:8px">' + '<div id="mpL"></div>';
       var q = $("#mpQ"); q.oninput = list; list(); q.focus();
       function list(){
         var s = q.value.toLowerCase();
@@ -1150,6 +1155,8 @@ function memPop(anchor, c){
         }).join("");
         $$("#mpL .row").forEach(function(r){ r.onclick = function(){
           var l = r.getAttribute("data-u"), i = c.members.indexOf(l);
+          if (i >= 0 && l === S.me.login && !S.me.admin && c.createdBy !== S.me.login && c.members.length > 1 &&
+              !confirm("O'zingizni olib tashlasangiz, bu kartochkani endi ko'ra olmaysiz. Davom etilsinmi?")) return;
           if (i >= 0) c.members.splice(i, 1); else c.members.push(l);
           saveCard(c).then(function(){ if (M.id === c.id) loadComments(); });
           $(".ck", r).textContent = c.members.indexOf(l) >= 0 ? "✓" : "";
