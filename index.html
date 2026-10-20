@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#1e4632">
-<title>Garden Trello</title>
+<title>Trello</title>
 <link rel="icon" href="assets/icon.png">
 <link rel="apple-touch-icon" href="assets/icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -247,7 +247,7 @@ table.ut td{padding:8px;border-bottom:1px solid #eef0f2;vertical-align:middle}
 <div id="login" class="hidden">
   <form class="lbox" id="lform">
     <img src="assets/emblem.png" alt="">
-    <h1>Garden Trello</h1>
+    <h1>Trello</h1>
     <p>Olimp Garden vazifalar doskasi</p>
     <input class="inp" id="lu" placeholder="Login" autocomplete="username" autocapitalize="off">
     <input class="inp" id="lp" type="password" placeholder="Parol" autocomplete="current-password">
@@ -258,7 +258,7 @@ table.ut td{padding:8px;border-bottom:1px solid #eef0f2;vertical-align:middle}
 
 <div id="app" class="hidden">
   <div id="top">
-    <button class="brand" id="goHome"><img src="assets/emblem.png" alt=""><span>Garden Trello</span></button>
+    <button class="brand" id="goHome"><img src="assets/emblem.png" alt=""><span>Trello</span></button>
     <button class="tb hide-m" id="goBoards">Doskalar</button>
     <button class="tb" id="goMy"><span class="hide-m">Mening vazifalarim</span><span class="show-m">Meniki</span></button>
     <div class="sp"></div>
@@ -400,7 +400,7 @@ var BG = ["#2f6b4f","#1e4632","#0c66e4","#6e5dc6","#c9372c","#a54800","#227d9b",
 function showHome(sub){
   S.view = "home";
   $("#board").classList.add("hidden"); $("#home").classList.remove("hidden");
-  document.title = "Garden Trello";
+  document.title = "Trello";
   var el = $("#home");
   el.innerHTML = '<div class="empty">Yuklanmoqda…</div>';
   Promise.all([api("GET", "/boards"), api("GET", "/my")]).then(function(r){
@@ -530,7 +530,7 @@ function showBoard(){
   var b = S.B.board;
   $("#board").style.background = b.color;
   $("#btitle").textContent = b.title;
-  document.title = b.title + " · Garden Trello";
+  document.title = b.title + " · Trello";
   $("#fLbl").innerHTML = ic("filter") + '<span class="hide-m">Filtr</span>';
   $("#bMenu").innerHTML = ic("dots");
   renderBoard();
